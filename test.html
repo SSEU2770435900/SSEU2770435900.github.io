@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>_230318_SruingminxZzjoussih</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+    <style>
+		#info {
+			width: 64px;
+			position: fixed;
+			right: 512px;
+			padding: 4px;
+			background-color: #FFFFFF80;
+			font-family: monospace;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+		}
+		#info .data {
+			width: 100%;
+			height: 16px;
+			background-color: #000;
+			color: #808080;
+			display: flex;
+			justify-content: right;
+		}
+		#info button {
+			width: 100%;
+			height: 24px;
+		}
+		/* :root {
+			--slider-originIntervalElapse: 125;
+		} */
+		#settings, #configurations {
+            user-select: none;
+			height: 48px;
+			margin: 8px;
+			padding: 16px;
+			display: flex;
+			align-items: center;
+			font-family: 'Courier New', Courier, monospace;
+			font-weight: 700;
+		}
+		.inputs {
+			display: flex;
+			flex-direction: column;
+		}
+		#settings input {
+			margin: 4px;
+			height: 12px;
+			width: 64px;
+		}
+		.input-settings {
+		  display: flex;
+		  align-items: center;
+		  justify-content: space-between;
+		  width: 80px;
+		  max-width: 512px;
+		  height: 16px;
+		  margin: 2px;
+		  background-color: #fff;
+		  border: 1px solid #ccc;
+		  border-radius: 4px;
+		}
+		
+		.input-settings-button {
+			margin: 0;
+			padding: 0;
+			height: 16px;
+			width: 16px;
+			font-size: 8px;
+/*		  height: 12px;
+		  width: 64px;
+		  background: red;
+		  padding: 0;
+		  border: none;
+		  border-radius: 4px;
+		  color: #fff;
+		  font-size: 6px;
+		  cursor: pointer;
+*/
+		}
+		
+		.input-settings-input {
+		  width: 64px;
+		  height: 12px;
+		  border: none;
+		  font-size: 8px;
+		  padding: 0;
+		  background: transparent;
+		  color: #333;
+		  outline: none;
+		}
+		button {
+		  width: 64px;
+		  height: 64px;
+		  background-color: rgb(224, 240, 248);
+		  border: 1px solid #dadce0;
+		  border-radius: 4px;
+		  color: rgba(0, 0, 0, 0.5);
+		  cursor: pointer;
+		  font-weight: 700;
+		  outline: none;
+		  margin: 4px;
+		  text-align: center;
+		  text-transform: uppercase;
+		  transition: box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+		}
+		button:hover, button:active, button.pressed {
+		  box-shadow: 0 0 0 4px rgb(124, 147, 194);
+		  background-color: rgb(204, 219, 255);
+		}
+		.controllings {
+			margin: 4px;
+		}
+		.controllings button {
+			margin: 0;
+		  padding: 0 16px;
+
+		}
+		/* button {
+			margin: 4px;
+			height: 64px;
+			width: 48px;
+			background-color: #aaa;
+			cursor: pointer;
+		}
+		button:active, button.pressed {
+			transform: translateY(2px); /* 將按鈕下移 2 個像素 */
+		/*	box-shadow: none; /* 移除按鈕陰影 */
+		/*	background-color: #ccc; /* 設置按鈕背景顏色 */
+		/*	color: #333; /* 設置按鈕文字顏色 */
+	/*	} */
+
+		.slider-container {
+			background-color: #FFFFFF80;
+			margin: 4px;
+			padding: 8px;
+			display: flex;
+			align-items: center;
+			flex-direction: column;
+		}
+		/* 隐藏默认的滑动条 */
+		#slider-elapse {
+		  -webkit-appearance: none;
+		  appearance: none;
+		  width: 128px;
+		  height: 16px;
+		  background: #ddd;
+		  outline: none;
+		  opacity: 0.7;
+		  -webkit-transition: .2s;
+		  transition: opacity .2s;
+		}
+
+		/* 鼠标按下时，更改滑动条的样式 */
+		#slider-elapse::-webkit-slider-thumb {
+		  -webkit-appearance: none;
+		  appearance: none;
+		  width: 12px;
+		  height: 16px;
+		  background: #2196F3;
+		  cursor: pointer;
+			box-shadow: 0 0 0 2px rgb(181, 201, 242);
+		}
+
+		#slider-elapse::-moz-range-thumb {
+		  width: 12px;
+		  height: 16px;
+		  background: #2196F3;
+		  cursor: pointer;
+		  box-shadow: 0 0 0 2px rgb(181, 201, 242);
+		}
+	/*	input[type="range"] {
+			width: 100%;
+			height: 20px;
+			background-color: #000;
+			border-radius: 0;
+			outline: #000;
+			margin: 0;
+			padding: 0;
+		  }
+		  
+		input[type="range"]::-webkit-slider-thumb {
+			background-color: #333;
+			border-radius: 0;
+			cursor: pointer;
+			height: 16px;
+			width: 16px;
+		}
+	*/	  
+		.silder-container label {
+		    margin-bottom: 10px;
+		}
+		.buttons-zoom-in-or-out {
+			display: flex;
+			flex-direction: column;
+		}
+		.buttons-zoom-in-or-out button {
+			width: 24px;
+			height: 24px;
+			padding: 0;
+			font-size: 16px;
+		}
+		.zoom-info {
+			display: flex;
+			flex-direction: column;
+			background-color: #00000000;
+		}
+		.zoom-info button {
+			width: 64px;
+			height: 24px;
+			margin: 0 4px 8px;
+		}
+		.zoom-info label {
+			width: auto;
+			height: 16px;
+			padding: 4px;
+			background-color: #FFFFFF80;
+			border-radius: 0px;
+			text-align: center;
+		}
+		.buttons-shift {
+			width: 128px;
+			height: 128px;
+			justify-content: space-between;
+			align-items: center;
+			position: relative;
+		}
+		.buttons-shift button {
+			width: 32px;
+            height: 32px;
+			margin: 0;
+			left: 50%;
+			top: 50%;
+            position: absolute;
+			transform-origin: -2px -2px;
+		}
+		#button-shift-left {
+			transform: rotate(135deg);
+		}
+		#button-shift-right {
+			transform: rotate(-45deg);
+		}
+		#button-shift-up {
+			transform: rotate(-135deg);
+		}
+		#button-shift-down {
+			transform: rotate(45deg);
+		}
+		.buttons-shift>button>div {
+			font-weight: 700;
+			transform: rotate(45deg);
+		}
+		.reshift-div {
+			left: 50%;
+			top: 50%;
+			background-color: #000;
+			border-radius: 4px;
+			box-shadow: 0 0 0 4px rgb(0, 0, 0);
+			position: absolute;
+		}
+		#reshift {
+			padding: 0 8px;
+		}
+        #showcase-settings {
+            user-select: none;
+            position: fixed;
+            width: auto;
+            height: 128px;
+            background-color: #FFFFFF80;
+            right: 16px;
+            top: 16px;
+            padding: 16px;
+
+            display: flex;
+            align-items: center;
+            justify-content: right;
+        }
+		#showcase-configurations {
+            margin-right: 16px;
+			display: flex;
+			flex-direction: column;
+            align-items: center;
+            justify-content: center;
+		}
+		#showcase-configurations button {
+            height: 32px;
+        }
+        #showcase-configurations label {
+            user-select: text;
+            width: auto;
+            height: auto;
+            font-family: monospace;
+        }
+        #showcase-configurations>div button {
+            width: 32px;
+            height: 32px;
+            transform: rotate(180deg);
+        }
+        #button-console {
+            font-family: "VT323", monospace;
+        }
+        body {
+            background-color:#a3d3e9;
+        }
+
+        * {
+            color:#000000;
+        }
+    </style>
+</head>
+<body>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+  <p>hello</p>
+	<div style="position: fixed; right: 256px; font-family: monospace;">
+		Contact me:
+		<ul>
+			<li>+86-18950160513</li>
+			<li>22307130111@m.mail.fd.edu.cn</li>
+			<li>2770435900@qq.com</li>
+		</ul>
+</body>
+</html>
