@@ -1,13 +1,13 @@
 var canvas = document.getElementById("partical");
 var context = canvas.getContext("2d");
 
-canvas.width = 1024;
-canvas.height = 768;
+canvas.width = 1024 * 2;
+canvas.height = 768 * 2;
 
 const beta = 0.25;
 const r_max = 256;
-const border = 16;
-const depth = 64;
+const border = 64;
+const depth = 16;
 
 var partical_colors = [
     "rgb(255, 0, 0)",
@@ -33,7 +33,7 @@ function projection_0(x) {
 
 function projection(x) {
     let center = [canvas.width / 2, canvas.height / 2];
-    let zoom = (depth / x[2]) * 0.5 + 0.5;
+    let zoom = (depth * Math.pow(x[2], -0.75)) * 0.5 + 0.5;
     return [
         center[0] - zoom * (center[0] - x[0]),
         center[1] - zoom * (center[1] - x[1])
@@ -49,7 +49,7 @@ class Partical{
 
     draw() {
         context.beginPath();
-        context.arc(...projection_0(this.x), 2, 0, 2 * Math.PI);
+        context.arc(...projection(this.x), 2, 0, 2 * Math.PI);
         context.fillStyle = partical_colors[this.color_index];
         context.fill();
         context.closePath();
@@ -114,21 +114,21 @@ class ParticalList{
                 ddx[2] += k * delta_x[2];
             }
             if (partical.x[0] < border) {
-                ddx[0] += 1;
+                ddx[0] += 4;
             } else if (partical.x[0] >= canvas.width - border) {
-                ddx[0] -= 1;
+                ddx[0] -= 4;
             }
             if (partical.x[1] < border) {
-                ddx[1] += 1;
+                ddx[1] += 4;
             } else if (partical.x[1] >= canvas.height - border) {
-                ddx[1] -= 1;
+                ddx[1] -= 4;
             }
             if (partical.x[2] < border) {
-                ddx[2] += 1;
+                ddx[2] += 4;
             } else if (partical.x[2] >= depth - border) {
-                ddx[2] -= 1;
+                ddx[2] -= 4;
             }
-            let frac = 0.75;
+            let frac = 0.9;
             partical.dx[0] = frac * partical.dx[0] + ddx[0];
             partical.dx[1] = frac * partical.dx[1] + ddx[1];
             partical.dx[2] = frac * partical.dx[2] + ddx[2];
@@ -142,5 +142,5 @@ class ParticalList{
     }
 };
 
-var partical_list = new ParticalList(256);
-setInterval(() => partical_list.update(), 16);
+var partical_list = new ParticalList(1024);
+setInterval(() => partical_list.update(), 32);
