@@ -5,11 +5,9 @@ var equilibrium = 0.25;
 var force_range = 128;
 var decay = 0.5;
 
-var width = 1024;
-var height = 768;
-var depth = 64;
-
-width = height = depth = 128;
+var width = 512;
+var height = 512;
+var depth = 256;
 
 var quantity = 512;
 var elapse = 16;
