@@ -15,18 +15,246 @@
             color: rgba(255, 255, 255, 0.25);
         }
         #partical {
-            position: relative;
-            left: 12.5%;
-            top: 12.5%;
-            width: 75%;
-            height: 75%;
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            width: 75vmin;
+            height: 75vmin;
             background-color: rgba(0, 0, 0, 0.5);
+            transform: translate(-50%, -50%);
+        }
+        #geal {
+            position: fixed;
+            right: 0px;
+            top: 0px;
+            width: 64px;
+            height: 64px;
+            z-index: 1;
+            cursor: pointer;
+        }
+        #geal:hover .pentagon, #geal:hover .pentagon-reversed {
+            fill: rgba(255, 255, 255, 0.25);
+        }
+        #geal:hover circle {
+            fill: rgba(0, 0, 0, 1);
+        }
+        #suspend-or-play {
+            position: fixed;
+            right: 0px;
+            top: 64px;
+            width: 64px;
+            height: 64px;
+            cursor: pointer;
+        }
+        #suspend-or-play:hover polygon, #suspend-or-play:hover .left, #suspend-or-play:hover .right {
+            fill: rgba(255, 255, 255, 0.25);
+        }
+        #clear {
+            position: fixed;
+            right: 0px;
+            top: 128px;
+            width: 64px;
+            height: 64px;
+            cursor: pointer;
+        }
+        #clear:hover path {
+            fill: rgba(255, 255, 255, 0.25);
+        }
+        .curtain {
+            position: fixed;
+            left: 0px;
+            top: 0px;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0 ,0, 0.5);
+            z-index: 0;
+        }
+        .partition {
+            margin: 16px;
+            color: rgb(128, 128, 128);
+            font-family: "Consolas", monospace;
+            font-size: 24px;
+        }
+        .modification {
+            margin: 16px;
+            padding: 0px 4px;
+            display: flex;
+            width: 192px;
+            height: 24px;
+            flex-direction: row;
+            align-items: center;
+            color: rgb(255, 255, 255);
+            border-radius: 4px;
+            font-family: "Consolas", monospace;
+            font-size: 12px;
+            background-color: rgba(255, 255 ,255, 0.5);
+        }
+        .modification span {
+            width: 96px;
+        }
+        .modification textarea {
+            margin: 0px 0px 0px 4px;
+            padding: 0px;
+            overflow: hidden;
+            width: 87.5%;
+            height: 87.5%;
+            color: rgb(255, 255, 255);
+            border-radius: 4px;
+            font-size: 16px;
+            background-color: rgba(0, 0, 0, 0.75);
+            resize: none;
+        }
+        .modification textarea:hover, #factor-matrix-modification > button:hover {
+            background-color: rgba(0, 0, 0, 0.5);
+            box-shadow: 0px 0px 16px rgba(128, 128, 128, 0.5);
+        }
+        .modification .adjust {
+            display: flex;
+            flex-direction: column;
+        }
+        .curtain button {
+            margin: 0px;
+            padding: 0px;
+            width: 10px;
+            height: 10px;
+            font-size: 4px;
+        }
+        .curtain button div {
+            transform: translate(-2px, -3px);
+        }
+        #factor-matrix-modification {
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: center;
+            width: fit-content;
+            height: fit-content;
+        }
+        #factor-matrix-modification > div {
+            margin: 4px;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+        }
+        #factor-matrix-modification button {
+            width: 16px;
+            height: 16px;
+            color: rgb(255, 255, 255);
+            border-radius: 4px;
+            background-color: rgba(0, 0,0 , 0.75);
+            cursor: pointer;
+        }
+        #factor-matrix-modification svg {
+            width: 16px;
+            height: 16px;
+        }
+        #factor-matrix-modification textarea {
+            display: none;
+            margin: 4px;
+            overflow-x: auto;
+            width: 384px;
+            height: fit-content;
+        }
+        #coordinary-modification {
+            width: 384px;
+        }
+        #coordinary-modification textarea {
+            width: 96px;
         }
     </style>
 </head>
 <body>
-    <p id="version">Version230531_2</p>
+    <p id="version">Version230601_2_1</p>
     <canvas id = "partical"></canvas>
-    <script src = "./Partical_0.js"></script>
+    <script src = "./Partical.js"></script>
+    <svg xmlns = "http://www.w3.org/2000/svg" id = "geal">
+        <polygon class = "pentagon" points = "32, 16 18, 27 23, 45 41, 45 47, 27 " fill = "rgba(0, 0, 0, 0)" stroke = "rgb(255, 255, 255)"/>
+        <polygon class = "pentagon-reversed" points = "32, 48 46, 37 41, 19 23, 19 18, 37" fill = "rgba(0, 0, 0, 0)" stroke = "rgb(255, 255, 255)"/>
+        <circle cx = "32" cy = "32" r = "4" fill = "rgba(0, 0, 0, 0" stroke = "rgb(255, 255, 255)">
+    </svg>
+    <svg xmlns = "http://www.w3.org/2000/svg" id = "suspend-or-play">
+        <rect class = "left" x = "20" y = "16" width = "8" height = "32" fill = "rgba(0, 0, 0, 0)" stroke = "rgb(255, 255, 255)"/>
+        <rect class = "right" x = "36" y = "16" width = "8" height = "32" fill = "rgba(0, 0, 0, 0)" stroke = "rgb(255, 255, 255)"/>
+    </svg>
+    <svg xmlns = "http://www.w3.org/2000/svg" id = "clear">
+        <path d = "M43, 21 A16, 16 270 1, 1 21, 21 L16, 16 L32, 16 L32, 32 L26, 27 A8, 8 270 1, 0 38, 27 Z" fill = "rgba(0, 0, 0, 0)" stroke = "rgb(255, 255, 255)"/>
+    </svg>
+    <template id = "curtain-template">
+        <div class = "curtain">
+            <div class = "partition">運動<hr></div>
+            <div class = "modification" id = "equilibrium-modification">
+                <span>equilibrium</span>
+                <textarea id = "equilibrium-textarea"></textarea>
+                <div class = "adjust"><button><div>▴</div></button><button><div>▾</div></button></div>
+            </div>
+            <div class = "modification" id = "force-range-modification">
+                <span>force&nbsp;range</span>
+                <textarea id = "force-range-textarea"></textarea>
+                <div class = "adjust"><button><div>▴</div></button><button><div>▾</div></button></div>
+            </div>
+            <div class = "modification" id = "decay-modification">
+                <span>speed&nbsp;decay</span>
+                <textarea id = "decay-textarea"></textarea>
+                <div class = "adjust"><button><div>▴</div></button><button><div>▾</div></button></div>
+            </div>
+            <div class = "partition">區域<hr></div>
+            <div class = "modification" id = "width-modification">
+                <span>width</span>
+                <textarea id = "width-textarea"></textarea>
+                <div class = "adjust"><button><div>▴</div></button><button><div>▾</div></button></div>
+            </div>
+            <div class = "modification" id = "height-modification">
+                <span>height</span>
+                <textarea id = "height-textarea"></textarea>
+                <div class = "adjust"><button><div>▴</div></button><button><div>▾</div></button></div>
+            </div>
+            <div class = "modification" id = "depth-modification">
+                <span>depth</span>
+                <textarea id = "depth-textarea"></textarea>
+                <div class = "adjust"><button><div>▴</div></button><button><div>▾</div></button></div>
+            </div>
+            <div class = "partition">粒子<hr></div>
+            <div class = "modification" id = "quantity-modification">
+                <span>quantity</span>
+                <textarea id = "quantity-textarea"></textarea>
+                <div class = "adjust"><button><div>▴</div></button><button><div>▾</div></button></div>
+            </div>
+            <div class = "modification" id = "elapse-modification">
+                <span>elapse</span>
+                <textarea id = "elapse-textarea"></textarea>
+                <div class = "adjust"><button><div>▴</div></button><button><div>▾</div></button></div>
+            </div>
+            <div class = "modification" id = "variety-modification">
+                <span>variety</span>
+                <textarea id = "variety-textarea"></textarea>
+                <div class = "adjust"><button><div>▴</div></button><button><div>▾</div></button></div>
+            </div>
+            <div class = "modification" id = "factor-matrix-modification">
+                <div>
+                    <span>factor matrix</span>
+                    <button><svg xmlns = "http://www.w3.org/2000/svg">
+                        <path d = "M2, 6 L10, 6 M 6, 2 L6, 10" stroke = "rgb(255, 255, 255)"/>
+                    </svg></button>
+                </div>
+                <textarea id = "factor-matrix-textarea"></textarea>
+            </div>
+            <div class = "partition">視角<hr></div>
+            <div class = "modification" id = "version-cone-modification">
+                <span>version&nbsp;cone</span>
+                <textarea id = "version-cone-textarea"></textarea>
+                <div class = "adjust"><button><div>▴</div></button><button><div>▾</div></button></div>
+            </div>
+            <div class = "modification" id = "coordinary-modification">
+                <span>coordinary</span>
+                <textarea id = "coord0-textarea"></textarea>
+                <div class = "adjust"><button><div>▴</div></button><button><div>▾</div></button></div>
+                <textarea id = "coord1-textarea"></textarea>
+                <div class = "adjust"><button><div>▴</div></button><button><div>▾</div></button></div>
+                <textarea id = "coord2-textarea"></textarea>
+                <div class = "adjust"><button><div>▴</div></button><button><div>▾</div></button></div>
+            </div>
+        </div>
+    </template>
+    <script src = "./Setting.js"></script>
 </body>
 </html>
