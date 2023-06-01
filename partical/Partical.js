@@ -5,8 +5,8 @@ var equilibrium = 0.25;
 var force_range = 128;
 var decay = 0.5;
 
-var width = 512;
-var height = 512;
+var width = 256;
+var height = 256;
 var depth = 256;
 
 var quantity = 512;
@@ -211,8 +211,11 @@ function canvas_wheel(event) {
 }
 
 canvas.addEventListener("mousedown", canvas_mousedown);
+canvas.addEventListener("touchstart", canvas_mousedown);
 document.addEventListener("mouseup", canvas_mouseup);
+document.addEventListener("touchend", canvas_mouseup);
 document.addEventListener("mousemove", canvas_mousemove);
+document.addEventListener("touchmove", canvas_mousemove);
 canvas.addEventListener("wheel", canvas_wheel);
 document.addEventListener("keydown", document_keydown);
 
