@@ -13,7 +13,7 @@ var quantity = 512;
 var elapse = 16;
 var variety = 2;
 
-var version_cone = 60;
+var vision_cone = 60;
 
 function resize_canvas() {
     canvas.width = canvas.height = Math.max(width, height, depth, 1024);
@@ -156,7 +156,7 @@ const camera = {
         if (this.orthographic) {
             return [ortho[0] + canvas.width / 2, ortho[1] + canvas.height / 2];
         }
-        const zoom = 180 / (Math.PI * version_cone);
+        const zoom = 180 / (Math.PI * vision_cone);
         let khi = Math.atan2(ortho[0], ortho[2]);
         let upsilon = Math.atan2(ortho[1], ortho[2]);
         return [(zoom * khi + 0.5) * canvas.width, (zoom * upsilon + 0.5) * canvas.height];
