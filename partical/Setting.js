@@ -145,14 +145,14 @@ function geal_mouseenter() {
         factor_matrix = matrix;
     });
 
-    const version_cone_modification = document.getElementById("version-cone-modification");
-    const version_cone_textarea = document.getElementById("version-cone-textarea");
-    version_cone_textarea.value = version_cone;
-    function version_cone_change_listener() {
-        version_cone = parseInt(version_cone_textarea.value) ?? 30;
+    const vision_cone_modification = document.getElementById("vision-cone-modification");
+    const vision_cone_textarea = document.getElementById("vision-cone-textarea");
+    vision_cone_textarea.value = vision_cone;
+    function vision_cone_change_listener() {
+        vision_cone = parseInt(vision_cone_textarea.value) ?? 30;
     }
-    version_cone_textarea.addEventListener("change", version_cone_change_listener);
-    add_adjusting_listener(version_cone_textarea, ...version_cone_modification.querySelectorAll("button"), 1, version_cone_change_listener);
+    vision_cone_textarea.addEventListener("change", vision_cone_change_listener);
+    add_adjusting_listener(vision_cone_textarea, ...vision_cone_modification.querySelectorAll("button"), 1, vision_cone_change_listener);
 
     const coord_modification = document.getElementById("coordinary-modification");
     const coord_textareas = [0, 1, 2].map(value => document.getElementById(`coord${value}-textarea`));
