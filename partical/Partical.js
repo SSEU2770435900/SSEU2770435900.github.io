@@ -231,6 +231,7 @@ direction_key.minus.addEventListener("mousedown", () => {
 });
 direction_key.shift.addEventListener("mousedown", () => {
     camera.orthographic = !camera.orthographic;
+    document.body.style.backgroundColor = "rgba(255, 255, 255, 1)";
 });
 
 setInterval(() => {
