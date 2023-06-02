@@ -90,6 +90,31 @@ function geal_mouseenter() {
     quantity_textarea.addEventListener("change", quantity_change_listener);
     add_adjusting_listener(quantity_textarea, ...quantity_modification.querySelectorAll("button"), 64, quantity_change_listener);
 
+    const partical_population = document.getElementById("partical-population");
+    for (let i = 0; i < partical_colors.length; ++i) {
+        const partical_detail = document.createElement("div");
+        partical_detail.className = "modification";
+        partical_detail.innerHTML = `
+            <span style = "width: 16px; height: 16px; background-color: ${partical_colors[i]};"></span>
+            <textarea id = "partical${i}-textarea"></textarea>
+            <div class = "adjust"><button><div>▴</div></button><button><div>▾</div></button></div>
+        `;
+        partical_population.appendChild(partical_detail);
+
+        const population_textarea = document.getElementById(`partical${i}-textarea`);
+        population_textarea.value = epoch.particals.list.filter(partical => partical.color_index === i).length;
+        function population_change_listener() {
+            let population = population_textarea.value;
+            epoch.particals.list = epoch.particals.list.filter(partical => partical.color_index !== i || --population >= 0);
+            while (--population >= 0) {
+                epoch.particals.list.push(new Partical(i));
+            }
+            quantity_textarea.value = epoch.particals.list.length;
+        }
+        population_textarea.addEventListener("change", population_change_listener);
+        add_adjusting_listener(population_textarea, ...partical_detail.querySelectorAll("button"), 64, population_change_listener);
+    }
+
     const elapse_modification = document.getElementById("elapse-modification");
     const elapse_textarea = document.getElementById("elapse-textarea");
     elapse_textarea.value = elapse;
@@ -144,31 +169,6 @@ function geal_mouseenter() {
         }
         factor_matrix = matrix;
     });
-
-    const partical_population = document.getElementById("partical-population");
-    for (let i = 0; i < partical_colors.length; ++i) {
-        const partical_detail = document.createElement("div");
-        partical_detail.className = "modification";
-        partical_detail.innerHTML = `
-            <span style = "width: 16px; height: 16px; background-color: ${partical_colors[i]};"></span>
-            <textarea id = "partical${i}-textarea"></textarea>
-            <div class = "adjust"><button><div>▴</div></button><button><div>▾</div></button></div>
-        `;
-        partical_population.appendChild(partical_detail);
-
-        const population_textarea = document.getElementById(`partical${i}-textarea`);
-        population_textarea.value = epoch.particals.list.filter(partical => partical.color_index === i).length;
-        function population_change_listener() {
-            let population = population_textarea.value;
-            epoch.particals.list = epoch.particals.list.filter(partical => partical.color_index !== i || --population >= 0);
-            while (--population >= 0) {
-                epoch.particals.list.push(new Partical(i));
-            }
-            quantity_textarea.value = epoch.particals.list.length;
-        }
-        population_textarea.addEventListener("change", population_change_listener);
-        add_adjusting_listener(population_textarea, ...partical_detail.querySelectorAll("button"), 64, population_change_listener);
-    }
 
     const vision_cone_modification = document.getElementById("vision-cone-modification");
     const vision_cone_textarea = document.getElementById("vision-cone-textarea");
