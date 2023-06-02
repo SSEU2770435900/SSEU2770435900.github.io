@@ -128,7 +128,7 @@ function force(r, a) {
 const camera = {
     phi: 180,
     theta: 90,
-    rho: 1024,
+    rho: 256,
     coord: [0, 0, 0],
     orthographic: false,
     lateral_move(movement) {
