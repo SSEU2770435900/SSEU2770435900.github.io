@@ -167,8 +167,11 @@ function geal_mouseenter() {
 
 function geal_mouseleave() {
     const curtain = document.querySelector(".curtain:not(template > .curtain)");
-        document.body.removeChild(curtain);
-        document.addEventListener("keydown", document_keydown);
+    if (curtain == null) {
+        return;
+    }
+    document.body.removeChild(curtain);
+    document.addEventListener("keydown", document_keydown);
 }
 
 geal.addEventListener("mouseenter", () => {
@@ -181,7 +184,12 @@ geal.addEventListener("mouseleave", () => {
         geal_mouseleave();
     }
 });
-geal.addEventListener("mousedown", () => in_setting = !in_setting);
+geal.addEventListener("mousedown", () => {
+    if (in_setting) {
+        geal_mouseleave();
+    }
+    in_setting = !in_setting;
+});
 
 const suspend_or_play = document.getElementById("suspend-or-play");
 function suspend_or_play_mousedown() {
