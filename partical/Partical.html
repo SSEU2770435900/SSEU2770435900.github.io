@@ -60,6 +60,28 @@
         #clear:hover path {
             fill: rgba(255, 255, 255, 0.25);
         }
+        #field {
+            position: fixed;
+            right: 0px;
+            top: 192px;
+            width: 64px;
+            height: 64px;
+            cursor: pointer;
+        }
+        #field:hover rect, #field:hover path {
+            fill: rgba(255, 255, 255, 0.25);
+        }
+        #direction {
+            position: fixed;
+            right: 0px;
+            top: 256px;
+            width: 64px;
+            height: 64px;
+            cursor: pointer;
+        }
+        #direction:hover circle, #direction:hover polygon {
+            fill: rgba(2555, 255, 255, 0.25);
+        }
         .curtain {
             position: fixed;
             left: 0px;
@@ -161,23 +183,98 @@
         #coordinary-modification textarea {
             width: 96px;
         }
+        .direction-keys {
+            position: fixed;
+            display: grid;
+            grid-template-rows: repeat(3, 1fr);
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin: 16px;
+            padding: 16px;
+            left: 0px;
+            bottom: 0px;
+            width: 256px;
+            height: 256px;
+            border-radius: 16px;
+            background-color: rgba(255, 255, 255, 0.25);
+        }
+        .direction-key {
+            border: 1px solid rgb(128, 128, 128);
+            border-radius: 8px;
+            background-color: rgba(0, 0, 0, 0.5);
+            cursor: pointer;
+            transition: border-width, box-shadow 0.25s ease-in-out;
+        }
+        .direction-key:hover {
+            border-width: 4px;
+            box-shadow: 0px 0px 16px rgb(128, 128, 128);
+        }
+        .direction-key svg {
+            position: relative;
+            left: 50%;
+            top: 50%;
+            width: 32px;
+            height: 32px;
+            transform: translate(-50%, -50%);
+        }
+        .direction-key:hover path, .direction-key:hover rect {
+            stroke-width: 4px;
+        }
+        #direction-key-up {
+            grid-row: 1;
+            grid-column: 2;
+        }
+        #direction-key-right {
+            grid-row: 2;
+            grid-column: 3;
+        }
+        #direction-key-down {
+            grid-row: 3;
+            grid-column: 2;
+        }
+        #direction-key-left {
+            grid-row: 2;
+            grid-column: 1;
+        }
+        #direction-key-plus {
+            grid-row: 1;
+            grid-column: 1;
+        }
+        #direction-key-minus {
+            grid-row: 1;
+            grid-column: 3;
+        }
+        #direction-key-shift {
+            grid-row: 2;
+            grid-column: 2;
+        }
     </style>
 </head>
 <body>
-    <p id="version">Version230601_2_21</p>
+    <p id="version">Version230601_2_22</p>
     <canvas id = "partical"></canvas>
-    <script src = "./Partical.js"></script>
     <svg xmlns = "http://www.w3.org/2000/svg" id = "geal">
-        <polygon class = "pentagon" points = "32, 16 18, 27 23, 45 41, 45 47, 27 " fill = "rgba(0, 0, 0, 0)" stroke = "rgb(255, 255, 255)"/>
+        <polygon class = "pentagon" points = "32, 16 18, 27 23, 45 41, 45 47, 27 " stroke = "rgb(255, 255, 255)"/>
         <polygon class = "pentagon-reversed" points = "32, 48 46, 37 41, 19 23, 19 18, 37" fill = "rgba(0, 0, 0, 0)" stroke = "rgb(255, 255, 255)"/>
-        <circle cx = "32" cy = "32" r = "4" fill = "rgba(0, 0, 0, 0" stroke = "rgb(255, 255, 255)">
+        <circle cx = "32" cy = "32" r = "4" stroke = "rgb(255, 255, 255)">
     </svg>
     <svg xmlns = "http://www.w3.org/2000/svg" id = "suspend-or-play">
-        <rect class = "left" x = "20" y = "16" width = "8" height = "32" fill = "rgba(0, 0, 0, 0)" stroke = "rgb(255, 255, 255)"/>
-        <rect class = "right" x = "36" y = "16" width = "8" height = "32" fill = "rgba(0, 0, 0, 0)" stroke = "rgb(255, 255, 255)"/>
+        <rect class = "left" x = "20" y = "16" width = "8" height = "32" stroke = "rgb(255, 255, 255)"/>
+        <rect class = "right" x = "36" y = "16" width = "8" height = "32" stroke = "rgb(255, 255, 255)"/>
     </svg>
     <svg xmlns = "http://www.w3.org/2000/svg" id = "clear">
-        <path d = "M43, 21 A16, 16 270 1, 1 21, 21 L16, 16 L32, 16 L32, 32 L26, 27 A8, 8 270 1, 0 38, 27 Z" fill = "rgba(0, 0, 0, 0)" stroke = "rgb(255, 255, 255)"/>
+        <path d = "M43, 21 A16, 16 270 1, 1 21, 21 L16, 16 L32, 16 L32, 32 L26, 27 A8, 8 270 1, 0 38, 27 Z" stroke = "rgb(255, 255, 255)"/>
+    </svg>
+    <svg xmlns = "http://www.w3.org/2000/svg" id = "field">
+        <rect x = "16" y = "16" width = "32" height = "32" stroke = "rgb(255, 255, 255)"/>
+        <path d = "M24, 16 Q24, 32 16, 32 M32, 16 Q24, 24 32, 32 T16, 40 M32, 48 Q48, 40 40, 32 T40, 16" stroke = "rgb(255, 255, 255)"/>
+    </svg>
+    <svg xmlns = "http://www.w3.org/2000/svg" id = "direction">
+        <circle cx = "32" cy = "32" r = "4" stroke = "rgb(255, 255, 255)"/>
+        <polygon points = "32, 16 27, 24 37, 24" stroke = "rgb(255, 255, 255)"/>
+        <polygon points = "48, 32 40, 27 40, 37" stroke = "rgb(255, 255, 255)"/>
+        <polygon points = "32, 48 37, 40 27, 40" stroke = "rgb(255, 255, 255)"/>
+        <polygon points = "16, 32 24, 37 24, 27" stroke = "rgb(255, 255, 255)"/>
     </svg>
     <template id = "curtain-template">
         <div class = "curtain">
@@ -256,6 +353,31 @@
             <div style = "position: fixed; right: 0px; bottom: 0px; color: rgba(255, 255, 255, 0.25); z-index: -1;">By sseucziawoej/sseubuhzzi 230601<br>230601許家瑋<br>2770435900@qq.com<br>scyiwbuhqiy@gmain.com</div>
         </div>
     </template>
+    <div class = "direction-keys">
+        <div class = "direction-key" id = "direction-key-up"><svg xmlns = "http://www.w3.org/2000/svg">
+            <path d = "M0, 32 L16, 0 L32, 32" fill = "rgba(0, 0, 0, 0)" stroke = "rgb(128, 128, 128)"/>
+        </svg></div>
+        <div class = "direction-key" id = "direction-key-right"><svg xmlns = "http://www.w3.org/2000/svg">
+            <path d = "M0, 0 L32, 16 L0, 32" fill = "rgba(0, 0, 0, 0)" stroke = "rgb(128, 128, 128)"/>
+        </svg></div>
+        <div class = "direction-key" id = "direction-key-down"><svg xmlns = "http://www.w3.org/2000/svg">
+            <path d = "M32, 0 L16, 32 L0, 0" fill = "rgba(0, 0, 0, 0)" stroke = "rgb(128, 128, 128)"/>
+        </svg></div>
+        <div class = "direction-key" id = "direction-key-left"><svg xmlns = "http://www.w3.org/2000/svg">
+            <path d = "M32, 32 L0, 16 L32, 0" fill = "rgba(0, 0, 0, 0)" stroke = "rgb(128, 128, 128)"/>
+        </svg></div>
+        <div class = "direction-key" id = "direction-key-plus"><svg xmlns = "http://www.w3.org/2000/svg">
+            <path d = "M0, 16 L32, 16 M16, 0 L16, 32" fill = "rgba(0, 0, 0, 0)" stroke = "rgb(128, 128, 128)"/>
+        </svg></div>
+        <div class = "direction-key" id = "direction-key-minus"><svg xmlns = "http://www.w3.org/2000/svg">
+            <path d = "M0, 16 L32, 16" fill = "rgba(0, 0, 0, 0)" stroke = "rgb(128, 128, 128)"/>
+        </svg></div>
+        <div class = "direction-key" id = "direction-key-shift"><svg xmlns = "http://www.w3.org/2000/svg">
+            <rect x = "0" y = "0" width = "32" height = "32" fill = "rgba(0, 0, 0, 0)" stroke = "rgb(128, 128, 128)" stroke-dasharray = "2, 2"/>
+            <rect x =  "8" y = "8" width = "16" height = "16" fill = "rgba(0, 0, 0, 0)" stroke = "rgb(128, 128, 128)"/>
+        </svg></div>
+    </div>
+    <script src = "./Partical.js"></script>
     <script src = "./Setting.js"></script>
 </body>
 </html>
