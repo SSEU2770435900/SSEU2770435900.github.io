@@ -5,13 +5,13 @@ var equilibrium = 0.25;
 var force_range = 128;
 var decay = 0.5;
 
-var width = 256;
-var height = 256;
-var depth = 256;
+var width = 64;
+var height = 64;
+var depth = 64;
 
 var quantity = 512;
 var elapse = 16;
-var variety = 2;
+var variety = 3;
 
 var vision_cone = 60;
 
@@ -231,6 +231,7 @@ direction_key.minus.addEventListener("mousedown", () => {
 });
 direction_key.shift.addEventListener("mousedown", () => {
     camera.orthographic = !camera.orthographic;
+    document.body.style.backgroundColor = "rgba(255, 255, 255, 1)";
 });
 
 setInterval(() => {
@@ -308,11 +309,6 @@ document.addEventListener("keydown", document_keydown);
 
 // Field relative start
 
-width = height = 64;
-depth = 1;
-quantity = 512;
-elapse = 0;
-
 function CalcFieldStrength(particals, left, top, right, bottom, surface, test_partical_index) {
     let field_strength = new Array(bottom - top);
     for (let i = 0; i < field_strength.length; ++i) {
@@ -362,9 +358,6 @@ function CalcFieldPotential(field_strength) {
             let energy = field_potential[i][j];
             ground = Math.min(energy, ground);
             peak = Math.max(energy, peak);
-            // if (isNaN(peak + ground)) {
-            //     console.log(peak, ground);
-            // }
             field_potential[i][j + 1] = energy + (field_strength[i][j][0] || 0);
             field_potential[i + 1][j] = energy + (field_strength[i][j][1] || 0);
         }
@@ -395,6 +388,8 @@ function draw_field(left, top, right, bottom, surface_depth, test_partical_index
 
 // Field relative end
 
+// Partical movement relative start
+
 class Partical{
     constructor(color_index, x) {
         this.color_index = color_index ?? Math.floor(Math.random() * partical_colors.length);
@@ -413,10 +408,15 @@ class Partical{
     move() {
         for (let dim = 0; dim < this.x.length; ++dim) {
             this.x[dim] += this.dx[dim] || 0;
-            // if (this.x[dim] == null || isNaN(this.x[dim]) || !isFinite(this.x[dim])) {
-            //     this.x[dim] = 0;
-            // }
         }
+    }
+
+    select(identify_color) {
+        context.beginPath();
+        context.arc(...camera.projection(this.x), 8, 0, 2 * Math.PI);
+        context.strokeStyle = identify_color;
+        context.stroke();
+        context.closePath();
     }
 };
 
@@ -491,7 +491,7 @@ class ParticalList{
                     r / force_range,
                     factor_matrix[partical.color_index][other_partical.color_index]
                 );
-                let k = f / r;
+                let k = f / (r || 1);
                 ddx[0] += k * delta_x[0];
                 ddx[1] += k * delta_x[1];
                 ddx[2] += k * delta_x[2];
@@ -505,9 +505,9 @@ class ParticalList{
             if (partical.x[2] + depth / 2 < 0 || partical.x[2] - depth / 2 >= 0) {
                 ddx[2] -= partical.x[2] / (depth || 1);
             }
-            partical.dx[0] = decay * partical.dx[0] + ddx[0] ?? 0;
-            partical.dx[1] = decay * partical.dx[1] + ddx[1] ?? 0;
-            partical.dx[2] = decay * partical.dx[2] + ddx[2] ?? 0;
+            partical.dx[0] = decay * partical.dx[0] + (ddx[0] || 0);
+            partical.dx[1] = decay * partical.dx[1] + (ddx[1] || 0);
+            partical.dx[2] = decay * partical.dx[2] + (ddx[2] || 0);
         }
         this.display(true);
     }
@@ -547,6 +547,8 @@ class ParticalList{
         this.resize();
     }
 };
+
+// Partical movement relative end
 
 var epoch = {
     start() {
