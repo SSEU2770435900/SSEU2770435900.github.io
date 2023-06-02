@@ -14,6 +14,7 @@
             position: fixed;
             font-family: "Consolas", monospace;
             color: rgba(255, 255, 255, 0.25);
+            z-index: -1;
         }
         #partical {
             position: fixed;
@@ -174,7 +175,7 @@
         #factor-matrix-modification textarea {
             display: none;
             margin: 4px;
-            overflow-x: auto;
+            overflow: auto;
             width: 384px;
             height: fit-content;
         }
@@ -252,7 +253,7 @@
     </style>
 </head>
 <body>
-    <p id="version">Version230601_2_24</p>
+    <p id="version">Version230601_2_25</p>
     <canvas id = "partical"></canvas>
     <svg xmlns = "http://www.w3.org/2000/svg" id = "geal">
         <polygon class = "pentagon" points = "32, 16 18, 27 23, 45 41, 45 47, 27 " stroke = "rgb(255, 255, 255)"/>
@@ -317,6 +318,7 @@
                 <textarea id = "quantity-textarea"></textarea>
                 <div class = "adjust"><button><div>▴</div></button><button><div>▾</div></button></div>
             </div>
+            <div id = "partical-population"></div>
             <div class = "modification" id = "elapse-modification">
                 <span>elapse</span>
                 <textarea id = "elapse-textarea"></textarea>
