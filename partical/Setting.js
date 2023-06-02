@@ -11,9 +11,7 @@ function add_adjusting_listener(node, adjust_up, adjust_down, step, change_liste
         change_listener();
     }
     adjust_up.addEventListener("mouseup", adjust_up_mouseup);
-    adjust_up.addEventListener("touchend", adjust_up_mouseup);
     adjust_down.addEventListener("mouseup", adjust_down_mouseup);
-    adjust_down.addEventListener("touchend", adjust_down_mouseup);
 }
 
 function geal_mouseenter() {
@@ -122,14 +120,14 @@ function geal_mouseenter() {
     const factor_matrix_modification = document.getElementById("factor-matrix-modification");
     const factor_matrix_textarea = document.getElementById("factor-matrix-textarea");
     factor_matrix_modification.querySelector("button").addEventListener("mouseup", () => {
-        if (factor_matrix_textarea.style["display"] === "") {
+        if (factor_matrix_textarea.style.display === "") {
             factor_matrix_modification.querySelector("path").setAttribute("d", "M2, 6 L10, 6");
-            factor_matrix_textarea.style["display"] = "block";
+            factor_matrix_textarea.style.display = "block";
             factor_matrix_textarea.value = JSON.stringify(factor_matrix, null, 4);
             factor_matrix_textarea.style["height"] = `${factor_matrix_textarea.scrollHeight}px`;
         } else {
             factor_matrix_modification.querySelector("path").setAttribute("d", "M2, 6 L10, 6 M 6, 2 L6, 10");
-            factor_matrix_textarea.style["display"] = "";
+            factor_matrix_textarea.style.display = "";
         }
     });
     factor_matrix_textarea.addEventListener("change", () => {
@@ -184,29 +182,43 @@ geal.addEventListener("mouseleave", () => {
     }
 });
 geal.addEventListener("mousedown", () => in_setting = !in_setting);
-geal.addEventListener("touchstart", geal_mouseenter);
 
 const suspend_or_play = document.getElementById("suspend-or-play");
 function suspend_or_play_mousedown() {
     if (suspend_or_play.querySelector("polygon") == null) {
         suspend_or_play.innerHTML = `
-            <polygon points = "24, 18 24, 46 48, 32" fill = "rgba(0, 0, 0, 0)" stroke = "rgb(255, 255, 255)"/>
+            <polygon points = "24, 18 24, 46 48, 32" stroke = "rgb(255, 255, 255)"/>
         `;
         epoch.suspend();
     } else {
         suspend_or_play.innerHTML = `
-            <rect class = "left" x = "20" y = "16" width = "8" height = "32" fill = "rgba(0, 0, 0, 0)" stroke = "rgb(255, 255, 255)"/>
-            <rect class = "right" x = "36" y = "16" width = "8" height = "32" fill = "rgba(0, 0, 0, 0)" stroke = "rgb(255, 255, 255)"/>
+            <rect class = "left" x = "20" y = "16" width = "8" height = "32" stroke = "rgb(255, 255, 255)"/>
+            <rect class = "right" x = "36" y = "16" width = "8" height = "32" stroke = "rgb(255, 255, 255)"/>
         `;
         epoch.play();
     }
 }
 suspend_or_play.addEventListener("mousedown", suspend_or_play_mousedown);
-suspend_or_play.addEventListener("touchstart", suspend_or_play_mousedown);
 
 const clear = document.getElementById("clear");
 function clear_mousedown() {
     epoch.start();
 }
 clear.addEventListener("mousedown", clear_mousedown);
-clear.addEventListener("touchstart", clear_mousedown);
+
+const field = document.getElementById("field");
+function field_mousedown() {
+    drawing_field = !drawing_field;
+}
+field.addEventListener("mousedown", field_mousedown);
+
+const direction = document.getElementById("direction");
+const direction_keys = document.querySelector(".direction-keys");
+function direction_mousedown() {
+    if (direction_keys.style.display === "none") {
+        direction_keys.style.display = "grid";
+    } else {
+        direction_keys.style.display = "none";
+    }
+}
+direction.addEventListener("mousedown", direction_mousedown);
