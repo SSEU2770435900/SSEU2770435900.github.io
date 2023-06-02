@@ -15,6 +15,8 @@ var variety = 2;
 
 var vision_cone = 60;
 
+var drawing_field = false;
+
 function resize_canvas() {
     canvas.width = canvas.height = Math.max(width, height, depth, 1024);
 }
@@ -113,6 +115,16 @@ function det(square) {
     return determinant;
 }
 
+function force(r, a) {
+    if (r < equilibrium) {
+        return r / equilibrium - 1;
+    }
+    if (r < 1) {
+        return a * (1 - Math.abs(2 * r - equilibrium - 1) / (1 - equilibrium));
+    }
+    return 0;
+}
+
 const camera = {
     phi: 180,
     theta: 90,
@@ -163,33 +175,85 @@ const camera = {
     }
 };
 
+function surface_projection(left, top, right, bottom, surface_depth) {
+    let surface = new Array(bottom - top);
+    for (let i = 0; i < right - left; ++i) {
+        surface[i] = new Array(right - left);
+    }
+    for (let i = 0; i < surface.length; ++i) {
+        for (let j = 0; j < surface[0].length; ++j) {
+            surface[i][j] = camera.projection([left + j, top + i, surface_depth]);
+        }
+    }
+    return surface;
+}
+
+// User control relative start
+
+let direction_key_status = {
+    horizon: 0,
+    vertical: 0,
+    zoom: 0,
+    shift: false
+};
+let direction_key = {
+    up: document.getElementById("direction-key-up"),
+    right: document.getElementById("direction-key-right"),
+    left: document.getElementById("direction-key-left"),
+    down: document.getElementById("direction-key-down"),
+    plus: document.getElementById("direction-key-plus"),
+    minus: document.getElementById("direction-key-minus"),
+    shift: document.getElementById("direction-key-shift")
+};
+
+direction_key.up.addEventListener("mousedown", () => direction_key_status.vertical = 1);
+direction_key.right.addEventListener("mousedown", () => direction_key_status.horizon = 1);
+direction_key.down.addEventListener("mousedown", () => direction_key_status.vertical = -1);
+direction_key.left.addEventListener("mousedown", () => direction_key_status.horizon = -1);
+direction_key.plus.addEventListener("mousedown", () => direction_key_status.zoom = -16);
+direction_key.minus.addEventListener("mousedown", () => direction_key_status.zoom = 16);
+direction_key.shift.addEventListener("mousedown", () => direction_key_status.shift = true);
+
+setInterval(() => {
+    camera.lateral_move(direction_key_status.horizon);
+    camera.longitudinal_move(direction_key_status.vertical);
+    camera.radial_move(direction_key_status.zoom);
+    camera.orthographic ^= direction_key_status.shift;
+    direction_key_status.shift = false;
+}, 16);
+
 function document_keydown(event) {
     switch(event.key) {
         case "ArrowUp": {
             camera.longitudinal_move(1);
+            epoch.particals.display(true);
             break;
         }
         case "ArrowRight": {
             camera.lateral_move(1);
+            epoch.particals.display(true);
             break;
         }
         case "ArrowDown": {
             camera.longitudinal_move(-1);
+            epoch.particals.display(true);
             break;
         }
         case "ArrowLeft": {
             camera.lateral_move(-1);
+            epoch.particals.display(true);
             break;
         }
         case "Enter": {
             camera.orthographic = !camera.orthographic;
+            epoch.particals.display(true);
             break;
         }
     }
 }
 
-var cursor_pos = [0, 0];
-var cursor_dragging = false;
+let cursor_pos = [0, 0];
+let cursor_dragging = false;
 function canvas_mousedown(event) {
     cursor_pos[0] = event.x;
     cursor_pos[1] = event.y;
@@ -197,6 +261,11 @@ function canvas_mousedown(event) {
 }
 function canvas_mouseup() {
     cursor_dragging = false;
+    direction_key_status.horizon = 0;
+    direction_key_status.vertical = 0;
+    direction_key_status.zoom = 0;
+    direction_key_status.shift = false;
+    epoch.particals.display(false);
 }
 function canvas_mousemove(event) {
     if (cursor_dragging) {
@@ -204,20 +273,110 @@ function canvas_mousemove(event) {
         camera.longitudinal_move(event.y - cursor_pos[1]);
         cursor_pos[0] = event.x;
         cursor_pos[1] = event.y;
+        epoch.particals.display(false);
     }
 }
 function canvas_wheel(event) {
     camera.radial_move(event.deltaY);
+    epoch.particals.display(false);
 }
 
 canvas.addEventListener("mousedown", canvas_mousedown);
-canvas.addEventListener("touchstart", canvas_mousedown);
 document.addEventListener("mouseup", canvas_mouseup);
-document.addEventListener("touchend", canvas_mouseup);
 document.addEventListener("mousemove", canvas_mousemove);
-document.addEventListener("touchmove", canvas_mousemove);
 canvas.addEventListener("wheel", canvas_wheel);
 document.addEventListener("keydown", document_keydown);
+
+// User control relative end
+
+// Field relative start
+
+width = height = 64;
+depth = 1;
+quantity = 512;
+elapse = 0;
+
+function CalcFieldStrength(particals, left, top, right, bottom, surface, test_partical_index) {
+    let field_strength = new Array(bottom - top);
+    for (let i = 0; i < field_strength.length; ++i) {
+        field_strength[i] = new Array(right - left);
+        for (let j = 0; j < field_strength[0].length; ++j) {
+            field_strength[i][j] = [0, 0];
+        }
+    }
+    for (let partical of particals) {
+        for (let j = -force_range, col = Math.floor(partical.x[0]) - force_range; j < force_range; ++j, ++col) {
+            if (col < left || col >= right) {
+                continue;
+            }
+            for (let i = -force_range, row = Math.floor(partical.x[1]) - force_range; i < force_range; ++i, ++row) {
+                if (row < top || row >= bottom) {
+                    continue;
+                }
+                let delta_x = [j, i, surface - partical.x[2]];
+                let r = norm(delta_x);
+                if (r > force_range) {
+                    continue;
+                }
+                let f = force(
+                    r / force_range,
+                    factor_matrix[test_partical_index][partical.color_index] ?? 1
+                );
+                let k = f / r;
+                let ddx = field_strength[row - top][col - left];
+                ddx[0] += k * delta_x[0] || 0;
+                ddx[1] += k * delta_x[1] || 0;
+            }
+        }
+    }
+    return field_strength;
+}
+
+function CalcFieldPotential(field_strength) {
+    let field_potential = new Array(field_strength.length);
+    for (let i = 0; i < field_potential.length; ++i) {
+        field_potential[i] = new Array(field_strength[0].length);
+    }
+    field_potential[0][0] = 0;
+    let ground = 0;
+    let peak = 0;
+    for (let i = 0; i < field_potential.length - 1; ++i) {
+        for (let j = 0; j < field_potential[0].length - 1; ++j) {
+            let energy = field_potential[i][j];
+            ground = Math.min(energy, ground);
+            peak = Math.max(energy, peak);
+            // if (isNaN(peak + ground)) {
+            //     console.log(peak, ground);
+            // }
+            field_potential[i][j + 1] = energy + (field_strength[i][j][0] || 0);
+            field_potential[i + 1][j] = energy + (field_strength[i][j][1] || 0);
+        }
+    }
+    const energy_diff = peak - ground;
+    for (let i = 0; i < field_potential.length; ++i) {
+        for (let j = 0; j < field_potential[0].length; ++j) {
+            field_potential[i][j] = (field_potential[i][j] - ground) / energy_diff;
+        }
+    }
+    return field_potential;
+}
+
+function draw_field(left, top, right, bottom, surface_depth, test_partical_index) {
+    let field_strength = CalcFieldStrength(epoch.particals.list, left, top, right, bottom, surface_depth, test_partical_index);
+    let field_potential = CalcFieldPotential(field_strength);
+    let projected_surface = surface_projection(left, top, right, bottom, surface_depth);
+    let px_width = projected_surface[1][1][0] - projected_surface[0][0][0];
+    let px_height = projected_surface[1][1][1] - projected_surface[0][0][1];
+    for (let i = 0; i < field_potential.length; ++i) {
+        for (let j = 0; j < field_potential[0].length; ++j) {
+            let value = field_potential[i][j] * 255;
+            context.fillStyle = `rgb(${value}, ${value}, ${value})`;
+            context.fillRect(...projected_surface[i][j], px_height, px_width);
+        }
+    }
+}
+
+// Field relative end
 
 class Partical{
     constructor(color_index, x) {
@@ -236,27 +395,62 @@ class Partical{
 
     move() {
         for (let dim = 0; dim < this.x.length; ++dim) {
-            this.x[dim] += this.dx[dim];
-            this.x[dim] ||= 0;
+            this.x[dim] += this.dx[dim] || 0;
+            // if (this.x[dim] == null || isNaN(this.x[dim]) || !isFinite(this.x[dim])) {
+            //     this.x[dim] = 0;
+            // }
         }
     }
 };
-
-function force(r, a) {
-    if (r < equilibrium) {
-        return r / equilibrium - 1;
-    }
-    if (r < 1) {
-        return a * (1 - Math.abs(2 * r - equilibrium - 1) / (1 - equilibrium));
-    }
-    return 0;
-}
 
 class ParticalList{
     constructor() {
         this.list = [];
         for (let i = 0; i < quantity ?? 0; ++i) {
             this.list.push(new Partical());
+        }
+    }
+
+    display(not_static) {
+        context.clearRect(0, 0, canvas.width, canvas.height);
+
+        const ground = [
+            [1, 1, -1],
+            [-1, 1, -1],
+            [-1, -1, -1],
+            [1, -1, -1],
+            [1, 1, 1],
+            [-1, 1, 1],
+            [-1, -1, 1],
+            [1, -1, 1]
+        ].map(coord => camera.projection([coord[0] * width / 2, coord[1] * height / 2, coord[2] * depth / 2]));
+        context.beginPath();
+        context.moveTo(...ground[3]);
+        for (let vertex of ground.slice(0, 4)) {
+            context.lineTo(...vertex);
+        }
+        context.strokeStyle = "rgb(255, 255, 255)";
+        context.stroke();
+        context.closePath();
+
+        context.beginPath();
+        context.moveTo(...ground[7]);
+        for (let vertex of ground.slice(4, 8)) {
+            context.lineTo(...vertex);
+        }
+        context.strokeStyle = "rgb(128, 128, 128)";
+        context.stroke();
+        context.closePath();
+
+        for (let partical of this.list) {
+            if (not_static) {
+                partical.move();
+            }
+            partical.draw();
+        }
+
+        if (drawing_field) {
+            draw_field(parseInt(-width / 2), parseInt(-height / 2), parseInt(width / 2), parseInt(height / 2), -depth / 2, 0);
         }
     }
 
@@ -298,41 +492,7 @@ class ParticalList{
             partical.dx[1] = decay * partical.dx[1] + ddx[1] ?? 0;
             partical.dx[2] = decay * partical.dx[2] + ddx[2] ?? 0;
         }
-
-        context.clearRect(0, 0, canvas.width, canvas.height);
-
-        const ground = [
-            [1, 1, -1],
-            [-1, 1, -1],
-            [-1, -1, -1],
-            [1, -1, -1],
-            [1, 1, 1],
-            [-1, 1, 1],
-            [-1, -1, 1],
-            [1, -1, 1]
-        ].map(coord => camera.projection([coord[0] * width / 2, coord[1] * height / 2, coord[2] * depth / 2]));
-        context.beginPath();
-        context.moveTo(...ground[3]);
-        for (let vertex of ground.slice(0, 4)) {
-            context.lineTo(...vertex);
-        }
-        context.strokeStyle = "rgb(255, 255, 255)";
-        context.stroke();
-        context.closePath();
-
-        context.beginPath();
-        context.moveTo(...ground[7]);
-        for (let vertex of ground.slice(4, 8)) {
-            context.lineTo(...vertex);
-        }
-        context.strokeStyle = "rgb(128, 128, 128)";
-        context.stroke();
-        context.closePath();
-
-        for (let partical of this.list) {
-            partical.move();
-            partical.draw();
-        }
+        this.display(true);
     }
 
     resize() {
