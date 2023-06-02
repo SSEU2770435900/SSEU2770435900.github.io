@@ -5,9 +5,9 @@ var equilibrium = 0.25;
 var force_range = 128;
 var decay = 0.5;
 
-var width = 64;
-var height = 64;
-var depth = 64;
+var width = 256;
+var height = 256;
+var depth = 256;
 
 var quantity = 512;
 var elapse = 16;
@@ -561,6 +561,7 @@ var epoch = {
     },
     suspend() {
         clearInterval(this.interval_id);
+        this.interval_id = null;
     },
     play() {
         this.interval_id = setInterval(() => this.particals.update(), elapse);
