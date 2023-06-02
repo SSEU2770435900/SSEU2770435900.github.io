@@ -193,8 +193,7 @@ function surface_projection(left, top, right, bottom, surface_depth) {
 let direction_key_status = {
     horizon: 0,
     vertical: 0,
-    zoom: 0,
-    shift: false
+    zoom: 0
 };
 let direction_key = {
     up: document.getElementById("direction-key-up"),
@@ -206,20 +205,38 @@ let direction_key = {
     shift: document.getElementById("direction-key-shift")
 };
 
-direction_key.up.addEventListener("mousedown", () => direction_key_status.vertical = 1);
-direction_key.right.addEventListener("mousedown", () => direction_key_status.horizon = 1);
-direction_key.down.addEventListener("mousedown", () => direction_key_status.vertical = -1);
-direction_key.left.addEventListener("mousedown", () => direction_key_status.horizon = -1);
-direction_key.plus.addEventListener("mousedown", () => direction_key_status.zoom = -16);
-direction_key.minus.addEventListener("mousedown", () => direction_key_status.zoom = 16);
-direction_key.shift.addEventListener("mousedown", () => direction_key_status.shift = true);
+direction_key.up.addEventListener("mousedown", () => {
+    direction_key_status.vertical = 1;
+    camera.longitudinal_move(direction_key_status.vertical);
+});
+direction_key.right.addEventListener("mousedown", () => {
+    direction_key_status.horizon = 1;
+    camera.lateral_move(direction_key_status.horizon);
+});
+direction_key.down.addEventListener("mousedown", () => {
+    direction_key_status.vertical = -1;
+    camera.longitudinal_move(direction_key_status.vertical);
+});
+direction_key.left.addEventListener("mousedown", () => {
+    direction_key_status.horizon = -1;
+    camera.lateral_move(direction_key_status.horizon);
+});
+direction_key.plus.addEventListener("mousedown", () => {
+    direction_key_status.zoom = -16;
+    camera.radial_move(direction_key_status.zoom);
+});
+direction_key.minus.addEventListener("mousedown", () => {
+    direction_key_status.zoom = 16;
+    camera.radial_move(direction_key_status.zoom);
+});
+direction_key.shift.addEventListener("mousedown", () => {
+    camera.orthographic = !camera.orthographic;
+});
 
 setInterval(() => {
     camera.lateral_move(direction_key_status.horizon);
     camera.longitudinal_move(direction_key_status.vertical);
     camera.radial_move(direction_key_status.zoom);
-    camera.orthographic ^= direction_key_status.shift;
-    direction_key_status.shift = false;
 }, 16);
 
 function document_keydown(event) {
