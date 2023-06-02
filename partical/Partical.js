@@ -50,7 +50,11 @@ const HIGH_COTRAST_COLOR = [
     "#aaffc3"
 ];
 function get_random_colors(count) {
-    return HIGH_COTRAST_COLOR.sort(() => Math.random() - 0.5).slice(0, count);
+    let random_colors = HIGH_COTRAST_COLOR.sort(() => Math.random() - 0.5).slice(0, count);
+    for (let i = 0; i < count - random_colors.length; ++i) {
+        random_colors.push("#" + Math.floor(Math.random() * 0x1000000).toString(16));
+    }
+    return random_colors;
 }
 function make_factor_matrix() {
     let matrix = new Array(variety);
