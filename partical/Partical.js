@@ -2,23 +2,23 @@ var canvas = document.getElementById("partical");
 var context = canvas.getContext("2d");
 
 var equilibrium = 0.25;
-var force_range = 128;
+var force_range = 256;
 var decay = 0.5;
 
-var width = 256;
-var height = 256;
+var width = 4096;
+var height = 4096;
 var depth = 256;
 
-var quantity = 512;
-var elapse = 16;
-var variety = 3;
+var quantity = 4096;
+var elapse = 0;
+var variety = 16;
 
 var vision_cone = 60;
 
 var drawing_field = false;
 
 function resize_canvas() {
-    canvas.width = canvas.height = Math.max(width, height, depth, 1024);
+    canvas.width = canvas.height = Math.min(Math.max(width, height, depth, 1024), 2048);
 }
 resize_canvas();
 
@@ -244,7 +244,7 @@ setInterval(() => {
 }, 16);
 
 function document_keydown(event) {
-    switch(event.key) {
+    switch (event.key) {
         case "ArrowUp": {
             camera.longitudinal_move(1);
             epoch.particals.display(true);
@@ -268,6 +268,32 @@ function document_keydown(event) {
         case "Enter": {
             camera.orthographic = !camera.orthographic;
             epoch.particals.display(true);
+            break;
+        }
+    }
+    switch (event.code) {
+        case "Space": {
+            if (event.shiftKey) {
+                camera.coord[2] -= 16;
+            } else {
+                camera.coord[2] += 16;
+            }
+            break;
+        }
+        case "KeyA": {
+            camera.coord[0] -= 16;
+            break;
+        }
+        case "KeyD": {
+            camera.coord[0] += 16;
+            break;
+        }
+        case "KeyS": {
+            camera.coord[1] -= 16;
+            break;
+        }
+        case "KeyW": {
+            camera.coord[1] += 16;
             break;
         }
     }
@@ -402,7 +428,7 @@ class Partical{
 
     draw() {
         context.beginPath();
-        context.arc(...camera.projection(this.x), 2, 0, 2 * Math.PI);
+        context.arc(...camera.projection(this.x), 4, 0, 2 * Math.PI);
         context.fillStyle = partical_colors[this.color_index];
         context.fill();
         context.closePath();
@@ -426,7 +452,7 @@ class Partical{
 class ParticalList{
     constructor() {
         this.list = [];
-        for (let i = 0; i < quantity ?? 0; ++i) {
+        while (this.length < quantity ?? 0) {
             this.list.push(new Partical());
         }
     }
@@ -474,44 +500,43 @@ class ParticalList{
         }
     }
 
-    update() {
-        for (let partical of this.list) {
-            let ddx = [0, 0, 0];
-            for (let other_partical of this.list) {
-                if (partical === other_partical) {
-                    continue;
-                }
-                let delta_x = [
-                    other_partical.x[0] - partical.x[0],
-                    other_partical.x[1] - partical.x[1],
-                    other_partical.x[2] - partical.x[2]
-                ];
-                let r = Math.sqrt(norm(delta_x));
-                if (r > force_range) {
-                    continue;
-                }
-                let f = force(
-                    r / force_range,
-                    factor_matrix[partical.color_index][other_partical.color_index]
-                );
-                let k = f / (r || 1);
-                ddx[0] += k * delta_x[0];
-                ddx[1] += k * delta_x[1];
-                ddx[2] += k * delta_x[2];
+    update_partical(partical) {
+        let ddx = [0, 0, 0];
+        for (let other_partical of this.list) {
+            if (partical === other_partical) {
+                continue;
             }
-            if (partical.x[0] + width / 2 < 0 || partical.x[0] - width / 2 >=  0) {
-                ddx[0] -= partical.x[0] / (width || 1);
-            }
-            if (partical.x[1] + height / 2 < 0 || partical.x[1] - height / 2 >= 0) {
-                ddx[1] -= partical.x[1] / (height || 1);
-            }
-            if (partical.x[2] + depth / 2 < 0 || partical.x[2] - depth / 2 >= 0) {
-                ddx[2] -= partical.x[2] / (depth || 1);
-            }
-            partical.dx[0] = decay * partical.dx[0] + (ddx[0] || 0);
-            partical.dx[1] = decay * partical.dx[1] + (ddx[1] || 0);
-            partical.dx[2] = decay * partical.dx[2] + (ddx[2] || 0);
+            let delta_x = [
+                other_partical.x[0] - partical.x[0],
+                other_partical.x[1] - partical.x[1],
+                other_partical.x[2] - partical.x[2]
+            ];
+            let r = Math.sqrt(norm(delta_x));
+            let f = force(
+                r / force_range,
+                factor_matrix[partical.color_index][other_partical.color_index]
+            );
+            let k = f  / (r || 1);
+            ddx[0] += k * delta_x[0];
+            ddx[1] += k * delta_x[1];
+            ddx[2] += k * delta_x[2];
         }
+        if (partical.x[0] < -width / 2 || partical.x[0] >= width / 2) {
+            ddx[0] -= partical.x[0] / (width || 1) ;
+        }
+        if (partical.x[1] < -height / 2 || partical.x[1] >= height / 2) {
+            ddx[1] -= partical.x[1] / (height || 1);
+        }
+        if (partical.x[2] < -depth / 2 || partical.x[2] >= depth / 2) {
+            ddx[2] -= partical.x[2] / (depth || 1);
+        }
+        partical.dx[0] = decay * partical.dx[0] + (ddx[0] || 0);
+        partical.dx[1] = decay * partical.dx[1] + (ddx[1] || 0);
+        partical.dx[2] = decay * partical.dx[2] + (ddx[2] || 0);
+    }
+
+    update() {
+        this.list.forEach(this.update_partical.bind(this));
         this.display(true);
     }
 
@@ -558,14 +583,41 @@ var epoch = {
         partical_colors = get_random_colors(variety);
         factor_matrix = make_factor_matrix();
         this.particals = new ParticalList(quantity);
+        this.interval_ids =[];
     },
     suspend() {
-        clearInterval(this.interval_id);
-        this.interval_id = null;
+        this.interval_ids.forEach(clearInterval);
     },
     play() {
-        this.interval_id = setInterval(() => this.particals.update(), elapse);
+        const zone_size = 1024;
+        for (let zone_index = 0; zone_index < Math.ceil(quantity / zone_size); ++zone_index) {
+            this.interval_ids.push(setInterval(() => {
+                for (let partical_index = zone_index * zone_size; partical_index < (zone_index + 1) * zone_size; ++partical_index) {
+                    try {
+                        this.particals.update_partical(this.particals.list[partical_index]);
+                    } catch (error) {
+                        if (partical_index < quantity) {
+                            this.particals.list[partical_index] = new Partical();
+                        }
+                    }
+                }
+                this.particals.display(true);
+            }, elapse));
+        }
     }
 };
 epoch.start();
 epoch.play();
+
+let aSelf = 1, aAdjoin = 0.5, aApart = -0.5;
+factor_matrix = Array.from(new Array(variety)).map((() => {
+    let temp = [aApart, aAdjoin, aSelf, aAdjoin, aApart].concat(...Array.from(new Array(variety - 5)).map(() => 0));
+    // temp = temp.slice(2).concat(temp.slice(0, 2));
+    return () => {
+        let row = temp;
+        temp = temp.slice(-1).concat(temp.slice(0, -1));
+        return row;
+    };
+    
+})());
+// epoch.particals.list = Array.from(new Array(quantity)).flatMap((value, index) => new Partical(Math.floor(index * variety / quantity)));
