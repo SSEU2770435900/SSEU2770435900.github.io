@@ -14,9 +14,6 @@ var context = canvas.getContext("2d");
 canvas.width = 120;
 canvas.height = 180;
 
-// canvas.width = 4;
-// canvas.height = 9;
-
 var hNumb = 12;
 var vNumb = 18;
 var size = Math.floor(Math.min(canvas.width / hNumb, canvas.height / vNumb));
@@ -109,9 +106,6 @@ function next_sandromino_display(shape, back, fore) {
     for (let block of shape) {
         next_sandromino_context.fillRect(...translate(...block), 128, 32);
     }
-    // next_sandromino_context.moveTo(...translate(0, 0));
-    // next_sandromino_context.lineTo(...translate(0, 1));
-    // next_sandromino_context.lineTo(...translate(1, 1));
 }
 
 const BACKGROUND_COLOR = "#000000";
@@ -295,7 +289,7 @@ var epoch = {
     },
     *gen_connected_slices(kind, column, upper, lower) {
         let connected_upper, connected_lower;
-        for (let i = this.accumulation[column]; i < lower; ) {
+        for (let i = 0; i < canvas.height; ) {
             while ((sand => sand?.walked || sand?.kind != null && sand?.kind !== kind)(this.gamearea[i]?.[column])) {
                 ++i;
             }
@@ -313,43 +307,17 @@ var epoch = {
             for (let i = connected_upper; i < connected_lower; ++i) {
                 this.gamearea[i][column].walked = true;
             }
-
-                                                                    // context.fillStyle = "#8000ff";
-                                                                    // context.fillRect(column, connected_upper, 1, connected_lower - connected_upper);
             yield [connected_upper, connected_lower]
         }
     },
-    connect_next(kind, column, upper, lower) {
-        if (column >= canvas.width) {
-            return true;
-        }
-        for (let slice of this.gen_connected_slices(kind, column, upper, lower)) {
-                                            // setTimeout(()=>{
-            if (this.connect_next(kind, column + 1, ...slice)) {
-                return true;
+    connect_next(kind, column, upper, lower, farthest) {
+        if (column >= 0 && column < canvas.width) {
+            for (let slice of this.gen_connected_slices(kind, column, upper, lower)) {
+                farthest = Math.max(farthest, this.connect_next(kind, column + 1, ...slice, farthest));
+                farthest = Math.max(farthest, this.connect_next(kind, column - 1, ...slice, farthest));
             }
-            if (column === 0) {
-                return false;
-            }
-            if (this.connect_next(kind, column - 1, ...slice)) {
-                return true;
-            }
-                                            // },500);
         }
-    },
-    hignlight_connected_slices(kind, column, upper, lower) {
-        if (column >= canvas.width) {
-            return;
-        }
-        for (let slice of this.gen_connected_slices(kind, column, upper, lower)) {
-            // sleep(64);
-            context.fillRect(column, slice[0], 1, slice[1] - slice[0]);
-            this.hignlight_connected_slices(kind, column + 1, ...slice);
-            if (column === 0) {
-                continue;
-            }
-            this.hignlight_connected_slices(kind, column - 1, ...slice);
-        }
+        return Math.max(farthest, column);
     },
     update() {
         this.not_any_controlled = true;
@@ -358,15 +326,13 @@ var epoch = {
                 if (this.gamearea[i][j].controlled) {
                     this.not_any_controlled = false;
                 }
-                // this.gamearea[i][j].walked = false;
-                // this.gamearea[i][j].highlighted = 0;
             }
         }
     },
     create() {
         if (this.not_any_controlled) {
-            let left_plus_right = (xs => Math.min(...xs) + Math.max(...xs))(this.next_shape.map(value => value[1]));
-            this.create_sandromino(this.next_shape, this.next_kind, (x => (x >> 1) - !(x & 1 || randBoolean()))(hNumb - left_plus_right), 0);
+            let left_p_right_m_one = (xs => Math.min(...xs) + Math.max(...xs))(this.next_shape.map(value => value[1]));
+            this.create_sandromino(this.next_shape, this.next_kind, (x => (x >> 1) + (x & 1 && randBoolean()))(hNumb - left_p_right_m_one - 1), 0);
             let shape = SAND_SHAPE[randRange(SAND_SHAPE.length)];
             let orientation = randRange(4);
             this.next_shape = shape.map(block => oriented(block, (v => [v, v])(Math.max(...shape.flatMap(value => value)) / 2), orientation));
@@ -385,7 +351,6 @@ var epoch = {
                 if (up[j_rev].kind !== -1) {
                     let dj = (randBoolean() ? [0, -1, 1] : [0, 1, -1]).find(value => down[j_rev + value]?.kind === -1) ?? null;
                     if (dj !== null) {
-                        // [up[j_rev], down[j_rev + dj]] = [down[j_rev + dj], up[j_rev]];
                         this.swap(i - 1, j_rev, i, j_rev + dj);
                     }
                 }
@@ -407,15 +372,7 @@ var epoch = {
     },
     eliminate() {
         for (let kind = 0; kind < 4; ++kind) {
-            let is_eliminatable = this.connect_next(kind, 0, 0, canvas.height);
-            // if (is_eliminatable) {
-            //     for (let i = 0; i < canvas.height; ++i) {
-            //         for (let j = 0; j < canvas.width; ++j) {
-            //             this.gamearea[i][j].walked = false;
-            //         }
-            //     }
-                
-            // }
+            let is_eliminatable = this.connect_next(kind, 0, 0, canvas.height, 0) === canvas.width;
             for (let i = 0; i < canvas.height; ++i) {
                 for (let j = 0; j < canvas.width; ++j) {
                     if (this.gamearea[i][j].walked) {
@@ -423,6 +380,7 @@ var epoch = {
                             this.gamearea[i][j].highlighted = 4;
                             this.gamearea[i][j].kind = -1;
                             this.gamearea[i][j].color = BACKGROUND_COLOR;
+                            this.gamearea[i][j].controlled = false;
                             score_display.display((++this.score).toString().padStart(12, "0"));
                         }
                         this.gamearea[i][j].walked = false;
@@ -471,7 +429,6 @@ var epoch = {
             }
         }
         if (this.operation_rotation !== 0) {
-        console.log(this.operation_rotation);
             let coords = [];
             let moved_sands = [];
             let i_sum = 0;
@@ -588,35 +545,3 @@ document.addEventListener("keydown", event => {
 
 epoch.start();
 epoch.play();
-
-// setInterval(() => {
-//     // return;
-//     epoch.update();
-//     epoch.create();
-//     epoch.fall();
-//     epoch.accumulate();
-//     epoch.eliminate();
-//     epoch.operate();
-//     epoch.display();
-// }, 16);
-
-// let BACK = {"kind": -1, "color": "#000000", "controlled": false};
-// let RED = {"kind": 1, "color": "#ff0000", "controlled": false};
-// let YELLOW = {"kind": 3, "color": "#ffff00", "controlled": false};
-
-// epoch.gamearea = [
-//     [   {...RED},       {...YELLOW},    {...YELLOW},        {...YELLOW} ],
-//     [   {...RED},       {...YELLOW},    {...RED},           {...RED}    ],
-//     [   {...RED},       {...YELLOW},    {...YELLOW},        {...RED}    ],
-//     [   {...RED},       {...RED},       {...YELLOW},        {...RED}    ],
-//     [   {...RED},       {...YELLOW},    {...YELLOW},        {...RED} ],
-//     [   {...RED},       {...YELLOW},    {...RED},           {...RED}    ],
-//     [   {...RED},       {...YELLOW},    {...YELLOW},        {...RED}    ],
-//     [   {...RED},       {...RED},       {...YELLOW},        {...RED}    ],
-//     [   {...YELLOW},    {...YELLOW},    {...YELLOW},        {...RED}    ]
-// ];
-// epoch.update();
-// epoch.display();
-// epoch.accumulate();
-// epoch.display();
-// epoch.eliminate();
