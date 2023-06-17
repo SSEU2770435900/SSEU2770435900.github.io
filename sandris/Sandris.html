@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sandris</title>
+    <style>
+        body {
+            background-color: rgb(4, 0, 16);
+        }
+        #version {
+            user-select: none;
+            position: fixed;
+            right: 16px;
+            bottom: 16px;
+            font-family: "Consolas", monospace;
+            color: rgba(255, 255, 255, 0.25);
+            z-index: -1;
+        }
+        #sandris {
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            width: 50vmin;
+            height: 75vmin;
+            background-color: rgba(0, 0, 0, 0.5);
+            border: 4px solid rgb(128, 128, 128);
+            transform: translate(-50%, -50%);
+        }
+        #score-screen {
+            position: fixed;
+            left: 16px;
+            top: 16px;
+            width: 60vmin;
+            height: 10vmin;
+        }
+        #next-sandromino {
+            position: fixed;
+            left: 16px;
+            top: 128px;
+            width: 64px;
+            height: 128px;
+        }
+        #geal {
+            position: fixed;
+            right: 0px;
+            top: 0px;
+            width: 64px;
+            height: 64px;
+            z-index: 1;
+            cursor: pointer;
+        }
+        #geal:hover .pentagon, #geal:hover .pentagon-reversed {
+            fill: rgba(255, 255, 255, 0.25);
+        }
+        #geal:hover circle {
+            fill: rgba(0, 0, 0, 1);
+        }
+        #suspend-or-play {
+            position: fixed;
+            right: 0px;
+            top: 64px;
+            width: 64px;
+            height: 64px;
+            cursor: pointer;
+        }
+        #suspend-or-play:hover polygon, #suspend-or-play:hover .left, #suspend-or-play:hover .right {
+            fill: rgba(255, 255, 255, 0.25);
+        }
+        #clear {
+            position: fixed;
+            right: 0px;
+            top: 128px;
+            width: 64px;
+            height: 64px;
+            cursor: pointer;
+        }
+        #clear:hover path {
+            fill: rgba(255, 255, 255, 0.25);
+        }
+        #field {
+            position: fixed;
+            right: 0px;
+            top: 192px;
+            width: 64px;
+            height: 64px;
+            cursor: pointer;
+        }
+        #field:hover rect, #field:hover path {
+            fill: rgba(255, 255, 255, 0.25);
+        }
+        #direction {
+            position: fixed;
+            right: 0px;
+            top: 192px;
+            width: 64px;
+            height: 64px;
+            cursor: pointer;
+        }
+        #direction:hover circle, #direction:hover polygon {
+            fill: rgba(2555, 255, 255, 0.25);
+        }
+        .curtain {
+            display: none;
+            position: fixed;
+            left: 0px;
+            top: 0px;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0 ,0, 0.5);
+            z-index: 0;
+        }
+        .partition {
+            margin: 16px;
+            color: rgb(128, 128, 128);
+            font-family: "Consolas", monospace;
+            font-size: 24px;
+        }
+        .modification {
+            margin: 16px;
+            padding: 0px 4px;
+            display: flex;
+            width: 192px;
+            height: 24px;
+            flex-direction: row;
+            align-items: center;
+            color: rgb(255, 255, 255);
+            border-radius: 4px;
+            font-family: "Consolas", monospace;
+            font-size: 12px;
+            background-color: rgba(255, 255 ,255, 0.5);
+        }
+        .modification span {
+            width: 96px;
+        }
+        .modification textarea {
+            margin: 0px 0px 0px 4px;
+            padding: 0px;
+            overflow: hidden;
+            width: 87.5%;
+            height: 87.5%;
+            color: rgb(255, 255, 255);
+            border-radius: 4px;
+            font-size: 16px;
+            background-color: rgba(0, 0, 0, 0.75);
+            resize: none;
+        }
+        .modification textarea:hover, #factor-matrix-modification > button:hover {
+            background-color: rgba(0, 0, 0, 0.5);
+            box-shadow: 0px 0px 16px rgba(128, 128, 128, 0.5);
+        }
+        .modification .adjust {
+            display: flex;
+            flex-direction: column;
+        }
+        .curtain button {
+            margin: 0px;
+            padding: 0px;
+            width: 10px;
+            height: 10px;
+            font-size: 4px;
+        }
+        .curtain button div {
+            transform: translate(-2px, -3px);
+        }
+        #factor-matrix-modification {
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: center;
+            width: fit-content;
+            height: fit-content;
+        }
+        #factor-matrix-modification > div {
+            margin: 4px;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+        }
+        #factor-matrix-modification button {
+            width: 16px;
+            height: 16px;
+            color: rgb(255, 255, 255);
+            border-radius: 4px;
+            background-color: rgba(0, 0,0 , 0.75);
+            cursor: pointer;
+        }
+        #factor-matrix-modification svg {
+            width: 16px;
+            height: 16px;
+        }
+        #factor-matrix-modification textarea {
+            display: none;
+            margin: 4px;
+            overflow: auto;
+            width: 384px;
+            height: fit-content;
+        }
+        #coordinary-modification {
+            width: 384px;
+        }
+        #coordinary-modification textarea {
+            width: 96px;
+        }
+        .direction-keys {
+            position: fixed;
+            display: grid;
+            grid-template-rows: repeat(2, 1fr);
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin: 16px;
+            padding: 16px;
+            left: 0px;
+            bottom: 0px;
+            width: 192px;
+            height: 128px;
+            border-radius: 16px;
+            background-color: rgba(255, 255, 255, 0.25);
+        }
+        .direction-key {
+            border: 1px solid rgb(128, 128, 128);
+            border-radius: 8px;
+            background-color: rgba(0, 0, 0, 0.5);
+            cursor: pointer;
+            transition: border-width, box-shadow 0.25s ease-in-out;
+        }
+        .direction-key:hover {
+            border-width: 4px;
+            box-shadow: 0px 0px 16px rgb(128, 128, 128);
+        }
+        .direction-key svg {
+            position: relative;
+            left: 50%;
+            top: 50%;
+            width: 32px;
+            height: 32px;
+            transform: translate(-50%, -50%);
+        }
+        .direction-key:hover path, .direction-key:hover rect {
+            stroke-width: 4px;
+        }
+        #direction-key-right {
+            grid-row: 1;
+            grid-column: 3;
+        }
+        #direction-key-down {
+            grid-row: 1/3;
+            grid-column: 2;
+        }
+        #direction-key-left {
+            grid-row: 1;
+            grid-column: 1;
+        }
+        #direction-key-rcw {
+            grid-row: 2;
+            grid-column: 1;
+        }
+        #direction-key-cw {
+            grid-row: 2;
+            grid-column: 3;
+        }
+    </style>
+</head>
+<body>
+    <canvas id = "sandris"></canvas>
+    <canvas id = "score-screen"></canvas>
+    <canvas id = "next-sandromino"></canvas>
+    <svg xmlns = "http://www.w3.org/2000/svg" id = "geal">
+        <polygon class = "pentagon" points = "32, 16 18, 27 23, 45 41, 45 47, 27 " stroke = "rgb(255, 255, 255)"/>
+        <polygon class = "pentagon-reversed" points = "32, 48 46, 37 41, 19 23, 19 18, 37" fill = "rgba(0, 0, 0, 0)" stroke = "rgb(255, 255, 255)"/>
+        <circle cx = "32" cy = "32" r = "4" stroke = "rgb(255, 255, 255)">
+    </svg>
+    <svg xmlns = "http://www.w3.org/2000/svg" id = "suspend-or-play">
+        <rect class = "left" x = "20" y = "16" width = "8" height = "32" stroke = "rgb(255, 255, 255)"/>
+        <rect class = "right" x = "36" y = "16" width = "8" height = "32" stroke = "rgb(255, 255, 255)"/>
+    </svg>
+    <svg xmlns = "http://www.w3.org/2000/svg" id = "clear">
+        <path d = "M43, 21 A16, 16 270 1, 1 21, 21 L16, 16 L32, 16 L32, 32 L26, 27 A8, 8 270 1, 0 38, 27 Z" stroke = "rgb(255, 255, 255)"/>
+    </svg>
+    <svg xmlns = "http://www.w3.org/2000/svg" id = "direction">
+        <circle cx = "32" cy = "32" r = "4" stroke = "rgb(255, 255, 255)"/>
+        <polygon points = "32, 16 27, 24 37, 24" stroke = "rgb(255, 255, 255)"/>
+        <polygon points = "48, 32 40, 27 40, 37" stroke = "rgb(255, 255, 255)"/>
+        <polygon points = "32, 48 37, 40 27, 40" stroke = "rgb(255, 255, 255)"/>
+        <polygon points = "16, 32 24, 37 24, 27" stroke = "rgb(255, 255, 255)"/>
+    </svg>
+    <div class = "curtain">
+        <div class = "partition">無事發生<hr></div>
+        <div class = "modification" id = "equilibrium-modification">
+            <span>無事發生</span>
+            <textarea id = "nothing-textarea"></textarea>
+            <div class = "adjust"><button><div>▴</div></button><button><div>▾</div></button></div>
+        </div>
+        <div style = "user-select: none; position: fixed; right: 0px; bottom: 0px; color: rgba(255, 255, 255, 0.25); z-index: -1;">By sseucziawoej/sseubuhzzi 230616<br>230616許家瑋<br>2770435900@qq.com<br>scyiwbuhqiy@gmain.com</div>
+    </div>
+    <div class = "direction-keys">
+        <div class = "direction-key" id = "direction-key-down"><svg xmlns = "http://www.w3.org/2000/svg">
+            <path d = "M32, 0 L16, 32 L0, 0" fill = "rgba(0, 0, 0, 0)" stroke = "rgb(128, 128, 128)"/>
+        </svg></div>
+        <div class = "direction-key" id = "direction-key-left"><svg xmlns = "http://www.w3.org/2000/svg">
+            <path d = "M32, 32 L0, 16 L32, 0" fill = "rgba(0, 0, 0, 0)" stroke = "rgb(128, 128, 128)"/>
+        </svg></div>
+        <div class = "direction-key" id = "direction-key-right"><svg xmlns = "http://www.w3.org/2000/svg">
+            <path d = "M0, 0 L32, 16 L0, 32" fill = "rgba(0, 0, 0, 0)" stroke = "rgb(128, 128, 128)"/>
+        </svg></div>
+        <div class = "direction-key" id = "direction-key-rcw"><svg xmlns = "http://www.w3.org/2000/svg">
+            <path d = "M32, 32 Q32, 16 0, 16 M16, 0 L0, 16 L16, 32" fill = "rgba(0, 0, 0, 0)" stroke = "rgb(128, 128, 128)"/>
+        </svg></div>
+        <div class = "direction-key" id = "direction-key-cw"><svg xmlns = "http://www.w3.org/2000/svg">
+            <path d = "M0, 32 Q0, 16 32, 16 M16, 0 L32, 16 L16, 32" fill = "rgba(0, 0, 0, 0)" stroke = "rgb(128, 128, 128)"/>
+        </svg></div>
+    </div>
+    <script src = "./Sandris.js"></script>
+    <script src = "./Setting.js"></script>
+    <p id="version">Version230615_0_0</p>
+</body>
+</html>
