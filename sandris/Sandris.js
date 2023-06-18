@@ -255,6 +255,7 @@ var epoch = {
     next_kind: randRange(4),
     score: 0,
     is_playing: true,
+    interval_ids: [],
     deadline: 3 * size,
     operation_down: false,
     operation_horizon: 0,
@@ -498,27 +499,61 @@ var epoch = {
         this.is_playing = true;
     },
     play() {
-        this.interval_id =  setInterval(() => {
+        this.interval_ids.push(setInterval(() => {
             if (this.is_playing) {
                 this.update();
                 this.create();
+            }
+        }, 250), setInterval(() => {
+            if (this.is_playing) {
                 this.fall();
+            }
+        }, 16), setInterval(() => {
+            if (this.is_playing) {
                 this.accumulate();
+            }
+        }, 64), setInterval(() => {
+            if (this.is_playing) {
                 this.eliminate();
+            }
+        }, 250), setInterval(() => {
+            if (this.is_playing) {
                 this.operate();
-                this.display();
-            } else {
+            }
+        }, 64), setInterval(() => {
+            this.display();
+            if (!this.is_playing) {
                 for (let time = 0; time < 3000; ) {
                     setTimeout(this.display.bind(this), time += 500);
                     setTimeout(this.lose, time += 500);
                 }
-                this.suspend();
             }
-        }, 16);
+        }, 16));
+        // this.interval_id =  setInterval(() => {
+        //     if (this.is_playing) {
+        //         this.update();
+        //         this.create();
+        //         this.fall();
+        //         this.accumulate();
+        //         this.eliminate();
+        //         this.operate();
+        //         this.display();
+        //     } else {
+        //         for (let time = 0; time < 3000; ) {
+        //             setTimeout(this.display.bind(this), time += 500);
+        //             setTimeout(this.lose, time += 500);
+        //         }
+        //         this.suspend();
+        //     }
+        // }, 16);
     },
     suspend() {
-        clearInterval(this.interval_id);
-        this.interval_id = null;
+        for (let interval_id of this.interval_ids) {
+            clearInterval(interval_id);
+        }
+        this.interval_ids = [];
+        // clearInterval(this.interval_id);
+        // this.interval_id = null;
     }
 };
 
