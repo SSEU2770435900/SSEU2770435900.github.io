@@ -508,7 +508,7 @@ var epoch = {
             if (this.is_playing) {
                 this.fall();
             }
-        }, 16), setInterval(() => {
+        }, 0), setInterval(() => {
             if (this.is_playing) {
                 this.accumulate();
             }
