@@ -499,6 +499,10 @@ var epoch = {
         this.is_playing = true;
     },
     play() {
+        let fall_time = Date.now();
+        this.fall();
+        fall_time = Date.now() - fall_time;
+        score_display.display(fall_time.toString());
         this.interval_ids.push(setInterval(() => {
             if (this.is_playing) {
                 this.update();
@@ -508,7 +512,7 @@ var epoch = {
             if (this.is_playing) {
                 this.fall();
             }
-        }, 0), setInterval(() => {
+        }, 16), setInterval(() => {
             if (this.is_playing) {
                 this.accumulate();
             }
