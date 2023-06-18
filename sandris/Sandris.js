@@ -506,11 +506,9 @@ var epoch = {
             }
         }, 250), setInterval(() => {
             if (this.is_playing) {
-                let end = Date.now() + 4;
                 this.fall();
-                while (Date.now() < end) { }
             }
-        }, 0), setInterval(() => {
+        }, 16), setInterval(() => {
             if (this.is_playing) {
                 this.accumulate();
             }
