@@ -527,6 +527,7 @@ var epoch = {
                     setTimeout(this.display.bind(this), time += 500);
                     setTimeout(this.lose, time += 500);
                 }
+                this.suspend();
             }
         }, 16));
         // this.interval_id =  setInterval(() => {
