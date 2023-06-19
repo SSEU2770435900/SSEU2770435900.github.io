@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>_230318_SruingminxZzjoussih</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+    <!-- <style>
+		#info {
+			width: 64px;
+			position: fixed;
+			right: 512px;
+			padding: 4px;
+			background-color: #FFFFFF80;
+			font-family: monospace;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+		}
+		#info .data {
+			width: 100%;
+			height: 16px;
+			background-color: #000;
+			color: #808080;
+			display: flex;
+			justify-content: right;
+		}
+		#info button {
+			width: 100%;
+			height: 24px;
+		}
+		/* :root {
+			--slider-originIntervalElapse: 125;
+		} */
+		#settings, #configurations {
+            user-select: none;
+			height: 48px;
+			margin: 8px;
+			padding: 16px;
+			display: flex;
+			align-items: center;
+			font-family: 'Courier New', Courier, monospace;
+			font-weight: 700;
+		}
+		.inputs {
+			display: flex;
+			flex-direction: column;
+		}
+		#settings input {
+			margin: 4px;
+			height: 12px;
+			width: 64px;
+		}
+		.input-settings {
+		  display: flex;
+		  align-items: center;
+		  justify-content: space-between;
+		  width: 80px;
+		  max-width: 512px;
+		  height: 16px;
+		  margin: 2px;
+		  background-color: #fff;
+		  border: 1px solid #ccc;
+		  border-radius: 4px;
+		}
+		
+		.input-settings-button {
+			margin: 0;
+			padding: 0;
+			height: 16px;
+			width: 16px;
+			font-size: 8px;
+		}
+		
+		.input-settings-input {
+		  width: 64px;
+		  height: 12px;
+		  border: none;
+		  font-size: 8px;
+		  padding: 0;
+		  background: transparent;
+		  color: #333;
+		  outline: none;
+		}
+		button {
+		  width: 64px;
+		  height: 64px;
+		  background-color: rgb(224, 240, 248);
+		  border: 1px solid #dadce0;
+		  border-radius: 4px;
+		  color: rgba(0, 0, 0, 0.5);
+		  cursor: pointer;
+		  font-weight: 700;
+		  outline: none;
+		  margin: 4px;
+		  text-align: center;
+		  text-transform: uppercase;
+		  transition: box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+		}
+		button:hover, button:active, button.pressed {
+		  box-shadow: 0 0 0 4px rgb(124, 147, 194);
+		  background-color: rgb(204, 219, 255);
+		}
+		.controllings {
+			margin: 4px;
+		}
+		.controllings button {
+			margin: 0;
+		  padding: 0 16px;
+
+		}
+
+		.slider-container {
+			background-color: #FFFFFF80;
+			margin: 4px;
+			padding: 8px;
+			display: flex;
+			align-items: center;
+			flex-direction: column;
+		}
+		#slider-elapse {
+		  -webkit-appearance: none;
+		  appearance: none;
+		  width: 128px;
+		  height: 16px;
+		  background: #ddd;
+		  outline: none;
+		  opacity: 0.7;
+		  -webkit-transition: .2s;
+		  transition: opacity .2s;
+		}
+
+		#slider-elapse::-webkit-slider-thumb {
+		  -webkit-appearance: none;
+		  appearance: none;
+		  width: 12px;
+		  height: 16px;
+		  background: #2196F3;
+		  cursor: pointer;
+			box-shadow: 0 0 0 2px rgb(181, 201, 242);
+		}
+
+		#slider-elapse::-moz-range-thumb {
+		  width: 12px;
+		  height: 16px;
+		  background: #2196F3;
+		  cursor: pointer;
+		  box-shadow: 0 0 0 2px rgb(181, 201, 242);
+		}
+		.silder-container label {
+		    margin-bottom: 10px;
+		}
+		.buttons-zoom-in-or-out {
+			display: flex;
+			flex-direction: column;
+		}
+		.buttons-zoom-in-or-out button {
+			width: 24px;
+			height: 24px;
+			padding: 0;
+			font-size: 16px;
+		}
+		.zoom-info {
+			display: flex;
+			flex-direction: column;
+			background-color: #00000000;
+		}
+		.zoom-info button {
+			width: 64px;
+			height: 24px;
+			margin: 0 4px 8px;
+		}
+		.zoom-info label {
+			width: auto;
+			height: 16px;
+			padding: 4px;
+			background-color: #FFFFFF80;
+			border-radius: 0px;
+			text-align: center;
+		}
+		.buttons-shift {
+			width: 128px;
+			height: 128px;
+			justify-content: space-between;
+			align-items: center;
+			position: relative;
+		}
+		.buttons-shift button {
+			width: 32px;
+            height: 32px;
+			margin: 0;
+			left: 50%;
+			top: 50%;
+            position: absolute;
+			transform-origin: -2px -2px;
+		}
+		#button-shift-left {
+			transform: rotate(135deg);
+		}
+		#button-shift-right {
+			transform: rotate(-45deg);
+		}
+		#button-shift-up {
+			transform: rotate(-135deg);
+		}
+		#button-shift-down {
+			transform: rotate(45deg);
+		}
+		.buttons-shift>button>div {
+			font-weight: 700;
+			transform: rotate(45deg);
+		}
+		.reshift-div {
+			left: 50%;
+			top: 50%;
+			background-color: #000;
+			border-radius: 4px;
+			box-shadow: 0 0 0 4px rgb(0, 0, 0);
+			position: absolute;
+		}
+		#reshift {
+			padding: 0 8px;
+		}
+        #showcase-settings {
+            user-select: none;
+            position: fixed;
+            width: auto;
+            height: 128px;
+            background-color: #FFFFFF80;
+            right: 16px;
+            top: 16px;
+            padding: 16px;
+
+            display: flex;
+            align-items: center;
+            justify-content: right;
+        }
+		#showcase-configurations {
+            margin-right: 16px;
+			display: flex;
+			flex-direction: column;
+            align-items: center;
+            justify-content: center;
+		}
+		#showcase-configurations button {
+            height: 32px;
+        }
+        #showcase-configurations label {
+            user-select: text;
+            width: auto;
+            height: auto;
+            font-family: monospace;
+        }
+        #showcase-configurations>div button {
+            width: 32px;
+            height: 32px;
+            transform: rotate(180deg);
+        }
+        #button-console {
+            font-family: "VT323", monospace;
+        }
+        body {
+            background-color:#a3d3e9;
+        }
+
+        * {
+            color:#000000;
+        }
+    </style> -->
+	<style>
+    * {
+      margin: 0px;
+      padding: 0px;
+    }
+    body {
+      background-color: darkslategrey;
+    }
+		.top-bar {
+			background-color: black;
+			color: rgba(255, 255, 255, 0.564);
+			padding: 10px;
+      text-align: center;
+      font-family: 'Times New Roman', Times, serif;
+    }
+		  
+		.top-bar h1 {
+			margin: 0;
+		}
+    .question-container {
+      padding: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 64px;
+    }
+    .question-container p {
+      margin: 16px;
+      font-size: 32px;
+      background-color: rgba(255, 255, 255, 0.3);
+    }
+    .button-container {
+      margin: 16px;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+    }
+		  
+    /*.button-container button {
+			margin: 10px;
+    }*/
+    .button-container button {
+		  width: 256px;
+		  height: 64px;
+		  background-color: rgb(224, 240, 248);
+		  border: 1px solid #dadce0;
+		  border-radius: 4px;
+		  color: rgba(0, 0, 0, 0.5);
+		  cursor: pointer;
+		  font-weight: 700;
+		  outline: none;
+		  margin: 16px;
+		  text-align: center;
+		  text-transform: uppercase;
+		  transition: box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+		}
+    
+		.button-container button:hover, button:active, button.pressed {
+		  box-shadow: 0 0 0 4px rgb(124, 147, 194);
+		  background-color: rgb(204, 219, 255);
+		}
+    #contactme{
+      position: fixed;
+      font-size: 8px;
+      right: 0px;
+      bottom: 0px;
+    }
+	</style>
+</head>
+<body>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+  <div class="top-bar">
+    <h1>A Simple Value Test</h1>
+  </div>
+  <div class="question-container">
+    <p>你支持哪个？</p>
+  </div>
+  <div class="button-container">
+    <button id="buo"></button>
+    <button id="phu"></button>
+    <button id="duing"></button>
+    <button id="drung"></button>
+  </div>
+	<div id="contactme">
+		Contact me:
+		<ul>
+			<li>+86-1145141919</li>
+			<li>1919810@m.mail.shimokitazawa.edu.cn</li>
+			<li>1919810@yajo.com</li>
+		</ul>
+	</div>
+  <script src="./moving.js"></script>
+</body>
+</html>
